@@ -1,0 +1,625 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - ArtSphere</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #100d18, #211432, #100d18);
+            color: white;
+            font-family: Arial, sans-serif;
+        }
+
+        .auth-header {
+            padding: 22px 8%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(28, 21, 40, 0.9);
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+
+        .auth-header h1 {
+            color: #d8a8ff;
+            margin: 0;
+        }
+
+        .auth-nav {
+            display: flex;
+            gap: 20px;
+        }
+
+        .auth-nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 18px;
+            border-radius: 25px;
+            transition: 0.3s;
+        }
+
+        .auth-nav a:hover {
+            background: #8e44ad;
+            transform: translateY(-2px);
+        }
+
+        .auth-page {
+            min-height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 45px 20px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 38px;
+            border-radius: 22px;
+            background: rgba(35, 25, 49, 0.95);
+            border: 1px solid rgba(216,168,255,0.25);
+            box-shadow: 0 15px 45px rgba(0,0,0,0.4);
+        }
+
+        .auth-card h2 {
+            text-align: center;
+            color: #e2c1ff;
+            font-size: 30px;
+            margin-bottom: 10px;
+        }
+
+        .auth-description {
+            text-align: center;
+            color: #c2b5ce;
+            margin-bottom: 28px;
+        }
+
+        .field-label {
+            display: block;
+            margin-top: 14px;
+            color: #eadcf5;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 15px;
+            margin: 7px 0 0;
+            border: 1px solid #57416b;
+            border-radius: 12px;
+            background: #171020;
+            color: white;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        .auth-input:focus {
+            border-color: #c084fc;
+            box-shadow: 0 0 12px rgba(192,132,252,0.25);
+        }
+
+        .auth-input:focus-visible,
+        .eye-button:focus-visible,
+        .auth-submit:focus-visible,
+        .auth-nav a:focus-visible,
+        .auth-bottom a:focus-visible {
+            outline: 3px solid #f0abfc;
+            outline-offset: 3px;
+        }
+
+        .field-error {
+            min-height: 18px;
+            margin: 4px 0 0;
+            color: #fda4af;
+            font-size: 13px;
+        }
+
+        .password-wrap {
+            position: relative;
+        }
+
+        .password-wrap .auth-input {
+            padding-right: 75px;
+        }
+
+        .eye-button {
+            position: absolute;
+            right: 10px;
+            top: 29px;
+            border: none;
+            background: transparent;
+            color: #d8a8ff;
+            cursor: pointer;
+            font-size: 13px;
+            padding: 8px;
+        }
+
+        .password-strength {
+            margin: 8px 0 14px;
+            color: #c2b5ce;
+            font-size: 13px;
+        }
+
+        .strength-track {
+            height: 7px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #392b45;
+        }
+
+        .strength-track span {
+            display: block;
+            width: 0;
+            height: 100%;
+            border-radius: inherit;
+            background: #f87171;
+            transition: width 0.2s ease, background-color 0.2s ease;
+        }
+
+        .password-strength p {
+            margin: 6px 0;
+        }
+
+        .password-requirements {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 5px 12px;
+            margin: 8px 0 14px;
+            padding: 0;
+            list-style: none;
+            color: #c2b5ce;
+            font-size: 12px;
+        }
+
+        .password-requirements li::before {
+            content: "○ ";
+        }
+
+        .password-requirements li.met {
+            color: #86efac;
+        }
+
+        .password-requirements li.met::before {
+            content: "✓ ";
+        }
+
+        .show-password {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 0 20px;
+            color: #d2c6dc;
+            font-size: 14px;
+        }
+
+        .show-password input {
+            accent-color: #a855f7;
+            cursor: pointer;
+        }
+
+        .auth-submit {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(90deg, #8e44ad, #b56be8);
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .auth-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(181,107,232,0.3);
+        }
+
+        .auth-submit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #signupMessage {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+        }
+
+        .auth-bottom {
+            text-align: center;
+            margin-top: 22px;
+            color: #c2b5ce;
+        }
+
+        .auth-bottom a {
+            color: #d8a8ff;
+            text-decoration: none;
+        }
+
+        .auth-bottom a:hover {
+            text-decoration: underline;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #a99bb5;
+        }
+
+        @media (max-width: 500px) {
+            .auth-header {
+                padding: 18px 5%;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .auth-card {
+                padding: 25px 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="auth-header">
+    <a class="brand-lockup" href="/"><img src="/logo.svg" alt=""><span>ArtSphere.</span></a>
+
+    <nav class="auth-nav site-nav" aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="login.html">Login</a>
+    </nav>
+</header>
+
+<main class="auth-page">
+
+    <section class="auth-card">
+
+        <h2>Create Account</h2>
+
+        <p class="auth-description">
+            Join ArtSphere and explore the world of creativity!
+        </p>
+
+        <form id="signupForm" novalidate>
+
+            <label class="field-label" for="fullName">Full Name</label>
+            <input
+                class="auth-input"
+                type="text"
+                name="name"
+                id="fullName"
+                placeholder="Enter your full name"
+                required
+                minlength="2"
+                maxlength="100"
+                autocomplete="name"
+                aria-describedby="nameError"
+            >
+            <p class="field-error" id="nameError" aria-live="polite"></p>
+
+            <label class="field-label" for="username">Username</label>
+            <input
+                class="auth-input"
+                type="text"
+                name="username"
+                id="username"
+                placeholder="Letters only, 4–22 characters"
+                required
+                minlength="4"
+                maxlength="22"
+                pattern="[A-Za-z]{4,22}"
+                autocomplete="username"
+                aria-describedby="usernameError"
+            >
+            <p class="field-error" id="usernameError" aria-live="polite"></p>
+
+            <label class="field-label" for="email">Gmail Address</label>
+            <input
+                class="auth-input"
+                type="email"
+                name="email"
+                id="email"
+                placeholder="name@gmail.com"
+                required
+                maxlength="254"
+                pattern="[A-Za-z0-9._%+\-]+@gmail[.]com"
+                autocomplete="email"
+                aria-describedby="emailError"
+            >
+            <p class="field-error" id="emailError" aria-live="polite"></p>
+
+            <label class="field-label" for="password">Password</label>
+            <div class="password-wrap">
+                <input
+                    class="auth-input"
+                    type="password"
+                    name="password"
+                    id="password"
+                    placeholder="Create Password"
+                    minlength="8"
+                    maxlength="128"
+                    pattern="(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&]).{8,}"
+                    required
+                    autocomplete="new-password"
+                    aria-describedby="passwordStrength passwordRules passwordError"
+                >
+
+                <button
+                    type="button"
+                    class="eye-button"
+                    id="togglePassword"
+                >Show</button>
+            </div>
+
+            <div class="password-strength">
+                <div
+                    class="strength-track"
+                    id="passwordStrengthMeter"
+                    role="progressbar"
+                    aria-label="Password strength"
+                    aria-valuemin="0"
+                    aria-valuemax="5"
+                    aria-valuenow="0"
+                >
+                    <span id="passwordStrengthBar"></span>
+                </div>
+                <p id="passwordStrength" role="status" aria-live="polite">
+                    Use at least 8 characters and meet all four rules.
+                </p>
+            </div>
+
+            <ul class="password-requirements" id="passwordRules">
+                <li id="ruleLength">At least 8 characters</li>
+                <li id="ruleUppercase">One uppercase letter</li>
+                <li id="ruleLowercase">One lowercase letter</li>
+                <li id="ruleNumber">One number</li>
+                <li id="ruleSpecial">One special sign (! @ # $ % ^ &amp;)</li>
+            </ul>
+            <p class="field-error" id="passwordError" aria-live="polite"></p>
+
+            <label class="show-password">
+                <input type="checkbox" id="showPassword">
+                Show Password
+            </label>
+
+            <button
+                type="submit"
+                class="auth-submit"
+                id="signupButton"
+            >
+                Create Account
+            </button>
+
+            <p id="signupMessage" role="status"></p>
+
+        </form>
+
+        <p class="auth-bottom">
+            Already have an account?
+            <a href="login.html">Login Here</a>
+        </p>
+
+    </section>
+
+</main>
+
+<footer>
+    <p>© 2026 ArtSphere | All Rights Reserved</p>
+</footer>
+
+<script>
+const password = document.getElementById("password");
+const showPassword = document.getElementById("showPassword");
+const togglePassword = document.getElementById("togglePassword");
+const fullName = document.getElementById("fullName");
+const username = document.getElementById("username");
+const email = document.getElementById("email");
+const signupForm = document.getElementById("signupForm");
+const signupMessage = document.getElementById("signupMessage");
+const signupButton = document.getElementById("signupButton");
+
+const usernamePattern = /^[A-Za-z]{4,22}$/;
+const gmailPattern = /^[A-Za-z0-9._%+-]+@gmail\.com$/i;
+const passwordPattern =
+    /^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[!@#$%^&]).{8,}$/;
+
+function updatePasswordVisibility(visible) {
+    password.type = visible ? "text" : "password";
+    togglePassword.textContent = visible ? "Hide" : "Show";
+    togglePassword.setAttribute(
+        "aria-label",
+        visible ? "Hide password" : "Show password"
+    );
+}
+
+showPassword.addEventListener("change", function () {
+    updatePasswordVisibility(this.checked);
+});
+
+togglePassword.addEventListener("click", function () {
+    showPassword.checked = !showPassword.checked;
+    updatePasswordVisibility(showPassword.checked);
+});
+
+function validateName() {
+    const value = fullName.value.trim();
+    let message = "";
+
+    if (!value) {
+        message = "Please enter your full name.";
+    } else if (value.length < 2) {
+        message = "Full name must be at least 2 characters.";
+    } else if (value.length > 100) {
+        message = "Full name must be 100 characters or fewer.";
+    }
+
+    fullName.setCustomValidity(message);
+    document.getElementById("nameError").textContent = message;
+    return !message;
+}
+
+function validateUsername() {
+    const value = username.value;
+    const message = !value
+        ? "Please enter a username."
+        : !usernamePattern.test(value)
+            ? "Use 4 to 22 letters only (A-Z); no spaces, numbers, or symbols."
+            : "";
+
+    username.setCustomValidity(message);
+    document.getElementById("usernameError").textContent = message;
+    return !message;
+}
+
+function validateEmail() {
+    const value = email.value.trim();
+    const message = gmailPattern.test(value)
+        ? ""
+        : "Please enter valid Gmail with @";
+
+    email.setCustomValidity(message);
+    document.getElementById("emailError").textContent = message;
+    return !message;
+}
+
+function updatePasswordStrength() {
+    const checks = [
+        {
+            id: "ruleLength",
+            passed: password.value.length >= 8
+        },
+        {
+            id: "ruleUppercase",
+            passed: /[A-Z]/.test(password.value)
+        },
+        {
+            id: "ruleLowercase",
+            passed: /[a-z]/.test(password.value)
+        },
+        {
+            id: "ruleNumber",
+            passed: /[0-9]/.test(password.value)
+        },
+        {
+            id: "ruleSpecial",
+            passed: /[!@#$%^&]/.test(password.value)
+        }
+    ];
+    const score = checks.filter((check) => check.passed).length;
+    const meter = document.getElementById("passwordStrengthMeter");
+    const meterBar = document.getElementById("passwordStrengthBar");
+    const strengthText = document.getElementById("passwordStrength");
+    const error = password.value && !passwordPattern.test(password.value)
+        ? "Password must meet all five requirements."
+        : "";
+
+    checks.forEach((check) => {
+        document.getElementById(check.id).classList.toggle(
+            "met",
+            check.passed
+        );
+    });
+
+    meter.setAttribute("aria-valuenow", String(score));
+    meterBar.style.width = `${score * 20}%`;
+    meterBar.style.backgroundColor =
+        score <= 2 ? "#f87171" : score <= 4 ? "#facc15" : "#4ade80";
+
+    strengthText.textContent = password.value
+        ? `Strength: ${score === 5 ? "Strong" : score >= 3 ? "Medium" : "Weak"} (${score} of 5 requirements met)`
+        : "Use at least 8 characters and meet all four rules.";
+    document.getElementById("passwordError").textContent = error;
+    password.setCustomValidity(
+        error || (!password.value ? "Please enter a password." : "")
+    );
+
+    return !error && Boolean(password.value);
+}
+
+fullName.addEventListener("input", validateName);
+username.addEventListener("input", validateUsername);
+email.addEventListener("input", validateEmail);
+password.addEventListener("input", updatePasswordStrength);
+
+signupForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const valid = [
+        validateName(),
+        validateUsername(),
+        validateEmail(),
+        updatePasswordStrength()
+    ].every(Boolean);
+
+    if (!valid || !signupForm.reportValidity()) {
+        return;
+    }
+
+    signupButton.disabled = true;
+    signupButton.textContent = "Creating Account...";
+    signupMessage.textContent = "Please wait...";
+
+    try {
+        const formData = new FormData(signupForm);
+
+        const response = await fetch("/signup", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: new URLSearchParams(formData).toString()
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            signupMessage.textContent =
+                data.message || "Signup failed. Please try again.";
+
+            signupButton.disabled = false;
+            signupButton.textContent = "Create Account";
+            return;
+        }
+
+        signupMessage.textContent =
+            "Account created successfully! Redirecting to login...";
+
+        signupForm.reset();
+        updatePasswordVisibility(false);
+        updatePasswordStrength();
+
+        setTimeout(() => {
+            window.location.href = data.redirect || "/login.html";
+        }, 1200);
+
+    } catch (error) {
+        console.error("SIGNUP ERROR:", error);
+
+        signupMessage.textContent =
+            "Something went wrong. Please try again.";
+
+        signupButton.disabled = false;
+        signupButton.textContent = "Create Account";
+    }
+});
+</script>
+<script src="/site.js" defer></script>
+
+</body>
+</html>
+

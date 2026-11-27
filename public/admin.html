@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - ArtSphere</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+        .admin-container {
+            padding: 50px 8%;
+            text-align: center;
+        }
+
+        .admin-container h2 {
+            color: #d8a6ff;
+            margin-bottom: 15px;
+        }
+
+        .users-table {
+            width: 100%;
+            margin-top: 30px;
+            border-collapse: collapse;
+            background: #241b32;
+            min-width: 850px;
+        }
+
+        .users-table th,
+        .users-table td {
+            padding: 15px;
+            border: 1px solid #57436d;
+            text-align: left;
+        }
+
+        .users-table th {
+            color: #e1baff;
+        }
+
+        .logout-btn {
+            display: inline-block;
+            margin-top: 25px;
+            padding: 12px 25px;
+            background: #a855f7;
+            color: white;
+            text-decoration: none;
+            border-radius: 25px;
+        }
+
+        #message {
+            margin-top: 20px;
+        }
+
+        .role-select {
+            padding: 8px;
+            border-radius: 6px;
+            background: #352544;
+            color: white;
+            border: 1px solid #a855f7;
+        }
+
+        .delete-btn {
+            padding: 9px 14px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 7px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: #991b1b;
+        }
+
+        .delete-btn:disabled,
+        .role-select:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="navbar">
+        <a class="brand-lockup" href="/"><img src="/logo.svg" alt=""><span>ArtSphere.</span></a>
+        <nav class="site-nav" aria-label="Admin navigation">
+            <a href="index.html">Home</a>
+            <a href="/logout">Logout</a>
+        </nav>
+    </header>
+
+    <main class="admin-container">
+
+        <h2>Welcome to Admin Dashboard</h2>
+        <p>Manage your ArtSphere registered users.</p>
+
+        <h3 style="margin-top:35px;">Registered Users</h3>
+
+        <p id="message">Loading users...</p>
+
+        <div style="overflow-x:auto;">
+            <table class="users-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Created At</th>
+                        <th>Change Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="usersList"></tbody>
+            </table>
+        </div>
+
+        <a href="/logout" class="logout-btn">Logout</a>
+
+    </main>
+
+    <script>
+        // Holds the logged-in admin's ID so we can protect their own row.
+        let currentAdminId = null;
+
+        async function loadCurrentAdmin() {
+            try {
+                const response = await fetch("/api/me");
+
+                if (!response.ok) {
+                    window.location.href = "/login.html";
+                    return false;
+                }
+
+                const data = await response.json();
+                currentAdminId = Number(data.id);
+                return true;
+
+            } catch (error) {
+                console.error("ADMIN ID LOAD ERROR:", error);
+                window.location.href = "/login.html";
+                return false;
+            }
+        }
+
+        async function loadUsers() {
+            const message = document.getElementById("message");
+            const usersList = document.getElementById("usersList");
+
+            try {
+                const response = await fetch("/api/admin/users");
+
+                if (response.status === 401) {
+                    window.location.href = "/login.html";
+                    return;
+                }
+
+                if (response.status === 403) {
+                    window.location.href = "/dashboard.html";
+                    return;
+                }
+
+                if (!response.ok) {
+                    throw new Error("Could not load users.");
+                }
+
+                const data = await response.json();
+
+                // The API returns a plain array, not { users: [...] }
+                const users = Array.isArray(data) ? data : (data.users || []);
+
+                usersList.innerHTML = "";
+
+                if (users.length === 0) {
+                    message.textContent = "No registered users yet.";
+                    return;
+                }
+
+                users.forEach(user => {
+                    const row = document.createElement("tr");
+
+                    [
+                        user.id,
+                        user.name,
+                        user.email,
+                        user.role,
+                        new Date(user.createdAt).toLocaleDateString()
+                    ].forEach(value => {
+                        const cell = document.createElement("td");
+                        cell.textContent = value;
+                        row.appendChild(cell);
+                    });
+
+                    // ----- Change Role -----
+                    const roleCell = document.createElement("td");
+                    const select = document.createElement("select");
+
+                    select.className = "role-select";
+
+                    ["user", "admin"].forEach(role => {
+                        const option = document.createElement("option");
+                        option.value = role;
+                        option.textContent = role;
+                        select.appendChild(option);
+                    });
+
+                    select.value = user.role;
+
+                    select.addEventListener("change", async () => {
+                        const newRole = select.value;
+
+                        if (!confirm("Change this user's role to " + newRole + "?")) {
+                            select.value = user.role;
+                            return;
+                        }
+
+                        try {
+                            const result = await fetch(
+                                "/api/admin/users/" + user.id + "/role",
+                                {
+                                    method: "PATCH",
+                                    headers: {
+                                        "Content-Type": "application/json"
+                                    },
+                                    body: JSON.stringify({ role: newRole })
+                                }
+                            );
+
+                            const payload = await result.json();
+
+                            if (!result.ok) {
+                                throw new Error(payload.message || "Role change failed.");
+                            }
+
+                            alert("User role updated successfully!");
+                            loadUsers();
+
+                        } catch (error) {
+                            alert(error.message);
+                            select.value = user.role;
+                        }
+                    });
+
+                    roleCell.appendChild(select);
+                    row.appendChild(roleCell);
+
+                    // ----- Delete User -----
+                    const actionCell = document.createElement("td");
+                    actionCell.className = "action-cell";
+
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.className = "delete-btn";
+
+                    deleteButton.addEventListener("click", async () => {
+                        if (!confirm("Are you sure you want to delete " + user.name + "?")) {
+                            return;
+                        }
+
+                        try {
+                            const result = await fetch(
+                                "/api/admin/users/" + user.id,
+                                { method: "DELETE" }
+                            );
+
+                            const payload = await result.json();
+
+                            if (!result.ok) {
+                                throw new Error(payload.message || "Delete failed.");
+                            }
+
+                            alert("User deleted successfully!");
+                            loadUsers();
+
+                        } catch (error) {
+                            alert(error.message);
+                        }
+                    });
+
+                    actionCell.appendChild(deleteButton);
+                    row.appendChild(actionCell);
+
+                    // Protect your own admin account in the UI
+                    if (currentAdminId !== null && Number(user.id) === currentAdminId) {
+                        select.disabled = true;
+                        deleteButton.disabled = true;
+                    }
+
+                    usersList.appendChild(row);
+                });
+
+                message.textContent =
+                    "Total registered users: " + users.length;
+
+            } catch (error) {
+                message.textContent = error.message;
+            }
+        }
+
+        // Boot sequence: get admin ID first, then load users.
+        (async function init() {
+            const ok = await loadCurrentAdmin();
+            if (ok) {
+                await loadUsers();
+            }
+        })();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your ArtSphere member dashboard and art collection.">
+    <title>Member Dashboard | ArtSphere</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <link rel="stylesheet" href="/style.css">
+    <style>
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 18px 7%;
+            background: #170f23;
+            border-bottom: 1px solid #30213e;
+        }
+
+        .dashboard-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .dashboard-nav a {
+            min-width: 105px;
+        }
+
+            .dashboard-logout {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 42px;
+                padding: 9px 16px;
+                border: 1px solid #69467f;
+                border-radius: 999px;
+                color: #eadcf5;
+                font-weight: 700;
+                text-decoration: none;
+        }
+
+        .welcome-box {
+            padding: 55px 20px 35px;
+            text-align: center;
+        }
+
+        .welcome-box h1 {
+            margin: 0 0 12px;
+            color: #e1baff;
+            font-size: clamp(30px, 5vw, 42px);
+        }
+
+        .welcome-box p,
+        .dashboard-gallery > p {
+            color: #c7b5d8;
+            line-height: 1.7;
+        }
+
+        .dashboard-gallery {
+            padding: 20px 8% 75px;
+        }
+
+        .dashboard-gallery h2 {
+            color: #f3e8ff;
+            text-align: center;
+        }
+
+        .dashboard-gallery > p {
+            margin: 0 auto 30px;
+            text-align: center;
+        }
+
+        .dashboard-art-button {
+            display: inline-block;
+            margin-top: 12px;
+            padding: 10px 18px;
+            border-radius: 999px;
+            background: #a855f7;
+            color: #fff;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .dashboard-message {
+            grid-column: 1 / -1;
+            color: #c7b5d8;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            .dashboard-header {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 18px 5%;
+            }
+
+            .dashboard-gallery {
+                padding-right: 5%;
+                padding-left: 5%;
+            }
+        }
+    </style>
+</head>
+<body>
+<header class="dashboard-header">
+    <a class="brand-lockup" href="/"><img src="/logo.svg" alt=""><span>ArtSphere.</span></a>
+    <nav class="dashboard-nav" aria-label="Member navigation">
+        <a href="/dashboard.html">Dashboard</a>
+        <a href="/ai-assistant.html">AI Assistant</a>
+        <a href="/">Home</a>
+    </nav>
+    <a href="/logout" class="dashboard-logout">Logout</a>
+</header>
+
+<main>
+    <section class="welcome-box">
+        <span class="eyebrow">YOUR ARTSPHERE</span>
+        <h1 id="welcomeMessage">Welcome to ArtSphere!</h1>
+        <p>Discover art, explore creativity, and enjoy beautiful paintings.</p>
+    </section>
+    <section class="dashboard-gallery" aria-labelledby="dashboardGalleryTitle">
+        <h2 id="dashboardGalleryTitle">Our Beautiful Art Collection</h2>
+        <p>Explore the artwork shared with the ArtSphere community.</p>
+        <div class="art-grid" id="artContainer" aria-live="polite">
+            <p class="dashboard-message">Loading artwork…</p>
+        </div>
+    </section>
+</main>
+<footer>
+    <a class="brand-lockup" href="/"><img src="/logo.svg" alt=""><span>ArtSphere.</span></a>
+    <p>Where creativity finds its home.</p>
+    <small>© 2026 ArtSphere. All rights reserved.</small>
+</footer>
+
+<script>
+async function loadUserDashboard() {
+    try {
+        const response = await fetch("/api/me", { credentials: "include" });
+        if (response.status === 401) {
+            window.location.replace("/login.html?next=%2Fdashboard.html");
+            return;
+        }
+        if (!response.ok) {
+            throw new Error("Unable to load your account details.");
+        }
+
+        const data = await response.json();
+        document.getElementById("welcomeMessage").textContent =
+            `Welcome, ${data.name}!`;
+    } catch (error) {
+        console.error("DASHBOARD USER ERROR:", error);
+        document.getElementById("welcomeMessage").textContent =
+            "Unable to load your dashboard. Please refresh.";
+    }
+}
+
+async function loadArtworks() {
+    const artContainer = document.getElementById("artContainer");
+
+    try {
+        const response = await fetch("/api/artworks", {
+            credentials: "include"
+        });
+        if (response.status === 401) {
+            window.location.replace("/login.html?next=%2Fdashboard.html");
+            return;
+        }
+        if (!response.ok) {
+            throw new Error("Unable to load artworks. Please try again later.");
+        }
+
+        const artworks = await response.json();
+        artContainer.replaceChildren();
+        if (!artworks.length) {
+            const emptyMessage = document.createElement("p");
+            emptyMessage.className = "dashboard-message";
+            emptyMessage.textContent =
+                "No artwork is available yet. Please check back soon.";
+            artContainer.appendChild(emptyMessage);
+            return;
+        }
+
+        artworks.forEach((artwork) => {
+            const card = document.createElement("article");
+            card.className = "art-card";
+
+            const image = document.createElement("img");
+            image.src = artwork.imageUrl;
+            image.alt = artwork.title;
+            image.loading = "lazy";
+
+            const info = document.createElement("div");
+            info.className = "art-info";
+            const style = document.createElement("span");
+            style.textContent = artwork.style || "ARTWORK";
+            const title = document.createElement("h3");
+            title.textContent = artwork.title;
+            const description = document.createElement("p");
+            description.textContent = artwork.description;
+            const explore = document.createElement("a");
+            explore.className = "dashboard-art-button";
+            explore.href = `/gallery.html?style=${encodeURIComponent(
+                artwork.style || ""
+            ).toLowerCase()}`;
+            explore.textContent = "Explore this style ↗";
+
+            info.append(style, title, description, explore);
+            card.append(image, info);
+            artContainer.appendChild(card);
+        });
+    } catch (error) {
+        console.error("ARTWORKS LOAD ERROR:", error);
+        const message = document.createElement("p");
+        message.className = "dashboard-message";
+        message.textContent =
+            error.message || "Unable to load artworks. Please refresh.";
+        artContainer.replaceChildren(message);
+    }
+}
+
+loadUserDashboard();
+loadArtworks();
+</script>
+<script src="/site.js" defer></script>
+</body>
+</html>

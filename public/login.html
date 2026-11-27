@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ArtSphere</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <link rel="stylesheet" href="/style.css">
+
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at 15% 20%, #49236355, transparent 35%),
+                radial-gradient(circle at 85% 80%, #6d28d955, transparent 35%),
+                #100b19;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .auth-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 8%;
+            background: #170f23;
+            border-bottom: 1px solid #392548;
+        }
+
+        .auth-header h1 {
+            color: white;
+            font-size: 27px;
+            margin: 0;
+        }
+
+        .auth-header h1 span {
+            color: #c084fc;
+        }
+
+        .auth-nav {
+            display: flex;
+            gap: 12px;
+        }
+
+        .auth-nav a {
+            color: #e9d5ff;
+            text-decoration: none;
+            padding: 11px 22px;
+            border: 1px solid #69467f;
+            border-radius: 30px;
+            transition: 0.3s ease;
+            font-weight: bold;
+        }
+
+        .auth-nav a:hover {
+            background: #9333ea;
+            color: white;
+            border-color: #c084fc;
+            box-shadow: 0 0 20px #a855f766;
+            transform: translateY(-3px);
+        }
+
+        .auth-main {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 55px 20px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 440px;
+            padding: 40px;
+            background: #1c1428eF;
+            border: 1px solid #59366f;
+            border-radius: 20px;
+            box-shadow: 0 20px 65px #0008;
+            animation: cardAppear 0.7s ease;
+        }
+
+        @keyframes cardAppear {
+            from {
+                opacity: 0;
+                transform: translateY(25px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-tag {
+            color: #c084fc;
+            font-size: 11px;
+            letter-spacing: 3px;
+            font-weight: bold;
+        }
+
+        .auth-card h2 {
+            color: white;
+            font-size: 32px;
+            margin: 14px 0 10px;
+        }
+
+        .auth-description {
+            color: #bdaecb;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .auth-field {
+            margin-bottom: 21px;
+            text-align: left;
+        }
+
+        .auth-field label {
+            display: block;
+            color: #eadcf5;
+            font-size: 14px;
+            margin-bottom: 9px;
+            font-weight: bold;
+        }
+
+        .auth-input-wrap {
+            position: relative;
+        }
+
+        .auth-input {
+            width: 100%;
+            padding: 15px 16px;
+            box-sizing: border-box;
+            border: 1px solid #493454;
+            border-radius: 10px;
+            outline: none;
+            background: #110c19;
+            color: white;
+            font-size: 14px;
+            transition: 0.3s ease;
+        }
+
+        .auth-input::placeholder {
+            color: #887b96;
+        }
+
+        .auth-input:focus {
+            border-color: #c084fc;
+            box-shadow: 0 0 0 3px #a855f733,
+                        0 0 18px #a855f722;
+            background: #1b1226;
+        }
+
+        .password-input {
+            padding-right: 55px;
+        }
+
+        .eye-button {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            color: #c084fc;
+            cursor: pointer;
+            font-size: 19px;
+            padding: 7px;
+            transition: 0.2s;
+        }
+
+        .eye-button:hover {
+            color: white;
+            transform: translateY(-50%) scale(1.15);
+        }
+
+        .auth-submit {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            background: linear-gradient(135deg, #a855f7, #7025bd);
+            box-shadow: 0 7px 22px #9333ea44;
+            transition: 0.3s ease;
+        }
+
+        .auth-submit:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px #a855f777;
+            background: linear-gradient(135deg, #c084fc, #9333ea);
+        }
+
+        .auth-submit:active {
+            transform: scale(0.98);
+        }
+
+        .auth-submit:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .auth-message {
+            min-height: 22px;
+            margin: 16px 0 0;
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .auth-message.error {
+            color: #fb7185;
+        }
+
+        .auth-message.success {
+            color: #86efac;
+        }
+
+        .auth-bottom {
+            text-align: center;
+            color: #bdaecb;
+            margin-top: 25px;
+            font-size: 14px;
+        }
+
+        .auth-bottom a {
+            color: #c084fc;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .auth-bottom a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .auth-footer {
+            background: #170f23;
+            border-top: 1px solid #392548;
+            padding: 20px;
+            text-align: center;
+            color: #a99ab7;
+            font-size: 13px;
+        }
+
+        @media (max-width: 500px) {
+            .auth-header {
+                padding: 18px 5%;
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+
+            .auth-header h1 {
+                font-size: 23px;
+            }
+
+            .auth-nav a {
+                padding: 9px 14px;
+                font-size: 13px;
+            }
+
+            .auth-card {
+                padding: 28px 22px;
+            }
+
+            .auth-card h2 {
+                font-size: 27px;
+            }
+        }
+    </style>
+</head>
+
+<body class="auth-page">
+
+<header class="auth-header">
+    <a class="brand-lockup" href="/"><img src="/logo.svg" alt=""><span>ArtSphere.</span></a>
+
+    <nav class="auth-nav site-nav" aria-label="Main navigation">
+        <a href="/">⌂ Home</a>
+        <a href="/signup.html">Sign Up ↗</a>
+    </nav>
+</header>
+
+<main class="auth-main">
+
+    <section class="auth-card">
+
+        <span class="auth-tag">WELCOME TO ARTSPHERE</span>
+
+        <h2>Welcome Back!</h2>
+
+        <p class="auth-description">
+            Login to your account and continue exploring the world of art.
+        </p>
+
+        <form id="loginForm" novalidate>
+
+            <div class="auth-field">
+                <label for="loginEmail">Email Address</label>
+
+                <input
+                    class="auth-input"
+                    type="email"
+                    name="email"
+                    id="loginEmail"
+                    placeholder="Enter your email"
+                    maxlength="254"
+                    autocomplete="email"
+                    required
+                >
+            </div>
+
+            <div class="auth-field">
+                <label for="loginPassword">Password</label>
+
+                <div class="auth-input-wrap">
+                    <input
+                        class="auth-input password-input"
+                        type="password"
+                        name="password"
+                        id="loginPassword"
+                        placeholder="Enter your password"
+                        autocomplete="current-password"
+                        required
+                    >
+
+                    <button
+                        type="button"
+                        class="eye-button"
+                        id="togglePassword"
+                        aria-label="Show password"
+                    >◉</button>
+                </div>
+            </div>
+
+            <button
+                type="submit"
+                class="auth-submit"
+                id="loginButton"
+            >
+                Login to ArtSphere →
+            </button>
+
+            <p
+                id="loginMessage"
+                class="auth-message"
+                role="status"
+                aria-live="polite"
+            ></p>
+
+        </form>
+
+        <p class="auth-bottom">
+            Don't have an account?
+            <a href="/signup.html">Create Account</a>
+        </p>
+
+    </section>
+
+</main>
+
+<footer class="auth-footer">
+    © 2026 ArtSphere | All Rights Reserved
+</footer>
+
+<script>
+    // PASSWORD SHOW / HIDE
+
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const togglePassword = document.getElementById("togglePassword");
+
+    togglePassword.addEventListener("click", function () {
+        const isHidden = loginPassword.type === "password";
+
+        loginPassword.type = isHidden ? "text" : "password";
+        togglePassword.textContent = isHidden ? "◎" : "◉";
+
+        togglePassword.setAttribute(
+            "aria-label",
+            isHidden ? "Hide password" : "Show password"
+        );
+    });
+
+
+    // LOGIN FUNCTION
+
+    const loginForm = document.getElementById("loginForm");
+    const loginMessage = document.getElementById("loginMessage");
+    const loginButton = document.getElementById("loginButton");
+
+    loginEmail.addEventListener("input", function () {
+        loginEmail.setCustomValidity("");
+    });
+
+    loginForm.addEventListener("submit", async function (e) {
+
+        e.preventDefault();
+
+        loginEmail.setCustomValidity("");
+
+        if (!loginEmail.value.trim() || !loginEmail.checkValidity()) {
+            loginEmail.setCustomValidity("Please enter a valid email address.");
+            loginEmail.reportValidity();
+            loginMessage.className = "auth-message error";
+            loginMessage.textContent = "Please enter a valid email address.";
+            return;
+        }
+
+        if (!loginPassword.value) {
+            loginMessage.className = "auth-message error";
+            loginMessage.textContent = "Please enter your password.";
+            loginPassword.focus();
+            return;
+        }
+
+        loginButton.disabled = true;
+        loginButton.textContent = "⏳ Logging in...";
+        loginMessage.className = "auth-message";
+        loginMessage.textContent = "Please wait...";
+
+        try {
+
+            const formData = new FormData(loginForm);
+
+            const response = await fetch("/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: new URLSearchParams(formData).toString()
+            });
+
+            const data = await response.json();
+
+            if (!response.ok || !data.success) {
+
+                loginMessage.className = "auth-message error";
+                loginMessage.textContent =
+                    data.message || "Invalid email or password.";
+
+                loginButton.disabled = false;
+                loginButton.textContent = "Login to ArtSphere →";
+                return;
+            }
+
+            loginMessage.className = "auth-message success";
+            loginMessage.textContent = "Login successful! Redirecting...";
+
+            if (data.redirect) {
+                const requestedPage =
+                    new URLSearchParams(window.location.search).get("next");
+                const redirectTo =
+                    data.redirect === "/dashboard.html" &&
+                    requestedPage === "/ai-assistant.html"
+                        ? requestedPage
+                        : data.redirect;
+
+                window.location.replace(redirectTo);
+            } else {
+                throw new Error("Login redirect is missing.");
+            }
+
+        } catch (error) {
+
+            console.error("LOGIN ERROR:", error);
+
+            loginMessage.className = "auth-message error";
+            loginMessage.textContent =
+                "Server error. Please check your connection.";
+
+            loginButton.disabled = false;
+            loginButton.textContent = "Login to ArtSphere →";
+        }
+
+    });
+</script>
+<script src="/site.js" defer></script>
+
+</body>
+</html>

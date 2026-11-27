@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore the world with the interactive ArtSphere map.">
+    <title>Explore the Map | ArtSphere</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header class="navbar">
+    <a class="brand-lockup" href="/"><img src="/logo.svg" alt=""><span>ArtSphere.</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+        <a href="/">Home</a>
+        <a href="/gallery.html">Gallery</a>
+        <a href="/artists.html">Artists</a>
+        <a href="/ai-assistant.html">AI Assistant</a>
+        <a href="/about.html">About</a>
+    </nav>
+    <div class="nav-actions">
+        <a href="/login.html" class="login-btn">Login</a>
+        <a href="/signup.html" class="signup-btn">Join</a>
+    </div>
+</header>
+<main>
+    <section class="page-hero">
+        <span class="eyebrow">A WORLD OF INSPIRATION</span>
+        <h1>Explore places around the world.</h1>
+        <p>Use the interactive map to pan and zoom. This map is provided by OpenStreetMap; ArtSphere does not currently list a physical gallery address.</p>
+    </section>
+    <section class="page-content">
+        <article class="content-panel">
+            <iframe
+                class="map-frame"
+                title="Interactive world map from OpenStreetMap"
+                src="https://www.openstreetmap.org/export/embed.html?bbox=-180%2C-75%2C180%2C75&amp;layer=mapnik"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+            ></iframe>
+            <p class="map-note">Map data © OpenStreetMap contributors. You can also <a href="https://www.openstreetmap.org/" target="_blank" rel="noopener noreferrer">open OpenStreetMap in a new tab</a>.</p>
+        </article>
+    </section>
+</main>
+<footer>
+    <a class="brand-lockup" href="/"><img src="/logo.svg" alt=""><span>ArtSphere.</span></a>
+    <p>Where creativity finds its home.</p>
+    <small>© 2026 ArtSphere. All rights reserved.</small>
+</footer>
+<script src="/site.js" defer></script>
+</body>
+</html>

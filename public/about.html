@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Learn about ArtSphere, an online home for discovering and celebrating art.">
+    <title>About ArtSphere</title>
+    <link rel="icon" type="image/svg+xml" href="/logo.svg">
+    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+        crossorigin="">
+</head>
+<body>
+<header class="navbar">
+    <a class="brand-lockup" href="/"><img src="/logo.svg" alt=""><span>ArtSphere.</span></a>
+    <nav class="site-nav" aria-label="Main navigation">
+        <a href="/">Home</a>
+        <a href="/gallery.html">Gallery</a>
+        <a href="/artists.html">Artists</a>
+        <a href="/ai-assistant.html">AI Assistant</a>
+        <a href="/about.html">About</a>
+    </nav>
+    <div class="nav-actions">
+        <a href="/login.html" class="login-btn">Login</a>
+        <a href="/signup.html" class="signup-btn">Join</a>
+    </div>
+</header>
+
+<main>
+    <section class="page-hero">
+        <span class="eyebrow">ABOUT ARTSPHERE</span>
+        <h1>A welcoming home for art and imagination.</h1>
+        <p>ArtSphere brings artwork, inspiration, and helpful tools together in one place. Explore at your own pace, discover new styles, and connect with creativity.</p>
+    </section>
+
+    <section class="page-content">
+        <article class="content-panel">
+            <h2>What you can do here</h2>
+            <p>Browse a curated gallery of paintings and creative works, learn about different artistic styles, and use the ArtSphere AI Assistant for art-related questions and recommendations.</p>
+            <p>Members can create an account, sign in, and visit a personal dashboard to explore the collection. The site is designed to make discovering and enjoying art straightforward on desktop and mobile.</p>
+            <p>ArtSphere is an online art discovery experience. This page does not represent a physical gallery address; use the interactive map below to explore the world map.</p>
+            <a class="primary-btn" href="/gallery.html">Explore the Gallery ↗</a>
+        </article>
+    </section>
+
+    <section id="about-map" class="page-content" style="padding-top:0" aria-labelledby="about-map-title">
+        <article class="content-panel">
+            <span class="eyebrow">EXPLORE THE WORLD</span>
+            <h2 id="about-map-title">Interactive map</h2>
+            <p>Pan and zoom the live map to explore places around the world. ArtSphere does not currently have a public gallery location pinned on this map.</p>
+            <div id="aboutMap" class="map-frame" role="application" aria-label="Live interactive world map"></div>
+            <p class="map-note">Map data © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap contributors</a>.</p>
+        </article>
+    </section>
+</main>
+
+<footer>
+    <a class="brand-lockup" href="/"><img src="/logo.svg" alt=""><span>ArtSphere.</span></a>
+    <p>Where creativity finds its home.</p>
+    <small>© 2026 ArtSphere. All rights reserved.</small>
+</footer>
+<script src="/site.js" defer></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+    crossorigin=""></script>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    if (typeof L === "undefined") {
+        document.getElementById("aboutMap").textContent =
+            "The live map could not be loaded.";
+        return;
+    }
+
+    const map = L.map("aboutMap", {
+        minZoom: 2,
+        worldCopyJump: true
+    }).setView([20, 0], 2);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap contributors"
+    }).addTo(map);
+});
+</script>
+</body>
+</html>
